@@ -1,6 +1,6 @@
 Matrix = []
 
-f = open(r"E:\MetVich\lab1\upper.txt", 'r')
+f = open("upper.txt", 'r')
 n = int(f.readline())
 for i in range(n):
     line = f.readline()

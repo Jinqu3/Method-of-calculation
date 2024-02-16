@@ -1,12 +1,13 @@
-
+import numpy as np
 def GaussMethod(M:list,b:list,n:int)->list:
-    for k in range(1,n):
-        a = M[k-1][k-1]
-        for i in range(k,n):
-            coefficient = M[i][k-1]/a
-            for j in range(k-1,n):
-                M[i][j]-= M[k-1][j]*coefficient
-            b[i] -= b[i-1]*coefficient
+    for k in range(0, n):
+        for i in range(k+1, n):
+            coefficient = M[i][k] / M[k][k]
+            for j in range(k, n):
+                if k == j:
+                    M[i][j] = 0
+                M[i][j] -= M[k][j] * coefficient
+            b[i] -= b[k] * coefficient
 
     return answer(M,b,n)
 def answer(M:list,b:list,n:int)->list:
@@ -25,7 +26,7 @@ def answer(M:list,b:list,n:int)->list:
 if __name__ == '__main__':
     Matrix = []
 
-    f = open(r'D:\MetVich\lab2\matrix.txt', 'r')
+    f = open('matrix2.txt', 'r')
     n = int(f.readline())
     for i in range(n):
         line = f.readline()
