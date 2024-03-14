@@ -1,4 +1,4 @@
-import numpy as np
+import copy
 def GaussMethod(M:list,b:list,n:int)->list:
     for k in range(0, n):
         for i in range(k+1, n):
@@ -10,7 +10,16 @@ def GaussMethod(M:list,b:list,n:int)->list:
                 M[i][j] -= M[k][j] * coefficient
             b[i] -= b[k] * coefficient
 
-    return answer(M,b,n)
+    x = n * [0]
+    x[n - 1] = b[n - 1] / M[n - 1][n - 1]
+
+    for i in range(n - 2, -1, -1):
+        summ = 0
+        for j in range(i + 1, n):
+            summ += M[i][j] * x[j]
+        x[i] = (b[i] - summ) / M[i][i]
+
+    return x
 
 def UpgradedGaussMethod(M:list,b:list,n:int)->list:
     order = [i for i in range(n)]
@@ -46,9 +55,6 @@ def UpgradedGaussMethod(M:list,b:list,n:int)->list:
                 M[i][j] -= M[k][j] * coefficient
             b[i] -= b[k] * coefficient
 
-    return answer(M, b,order, n)
-def answer(M:list,b:list,order:list,n:int)->list:
-
     x = n * [0]
     x[n - 1] = b[n - 1] / M[n - 1][n - 1]
 
@@ -60,18 +66,37 @@ def answer(M:list,b:list,order:list,n:int)->list:
 
     return [x[i] for i in order]
 
-if __name__ == '__main__':
-    Matrix = []
 
-    f = open('matrix2.txt', 'r')
+def Determinant(M:list,b:list,n:int):
+    for k in range(0, n):
+        for i in range(k+1, n):
+            coefficient = M[i][k] / M[k][k]
+            for j in range(k, n):
+                if k == j:
+                    M[i][j] = 0
+                    continue
+                M[i][j] -= M[k][j] * coefficient
+            b[i] -= b[k] * coefficient
+
+    det = 1
+    for i in range(n):
+        det *= M[i][i]
+
+    return det
+
+
+if __name__ == '__main__':
+    A = []
+
+    f = open('lab2/matrix.txt', 'r')
     n = int(f.readline())
     for i in range(n):
         line = f.readline()
-        Matrix.append(list(map(int, line.split())))
+        A.append(list(map(int, line.split())))
 
     b = list(map(int, f.read().split()))
     f.close()
 
-    #x = GaussMethod(Matrix.copy(),b.copy(),n)
-    y = UpgradedGaussMethod(Matrix.copy(),b.copy(),n)
-    print(y)
+    #rez = GaussMethod(copy.deepcopy(A),copy.deepcopy(b),n)
+    #rez_upgrade = UpgradedGaussMethod(copy.deepcopy(A),copy.deepcopy(b),n)
+    #det = Determinant(copy.deepcopy(A),copy.deepcopy(b),n)
