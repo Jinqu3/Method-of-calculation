@@ -7,25 +7,27 @@ def sign(a):
     return 1
 
 n = int(input("Введите размер матрицы: "))
-m = n + 1  # Расширенная матрица
-A = [[0 for j in range(m + 1)] for i in range(n + 1)]
+
+A = [[0 for j in range(n+1 + 1)] for i in range(n + 1)]
 for i in range(1, n + 1):
-    for j in range(1, m + 1):
+    for j in range(1, n+2):
         A[i][j] = 1.0 / (i + j - 1)
+        
 print("Точное решение системы: ")
-X = [0] * m
+X = [0] * (n+1)
 for i in range(1, n + 1):
-    X[i] = 10 * i
+    X[i] = 20 * i
     print(X[i], end=" ")
 print()
+
 for i in range(1, n + 1):
     summa = 0
-    for j in range(1, m):
+    for j in range(1, n+1):
         summa += A[i][j] * X[j]
-    A[i][m] = summa
+    A[i][n+1] = summa
 
-S = [[0 for j in range(m)] for i in range(m)]
-D = [[0 for j in range(m)] for i in range(m)]
+S = [[0 for j in range(n+1)] for i in range(n+1)]
+D = [[0 for j in range(n+1)] for i in range(n+1)]
 
 S[1][1] = sqrt(abs(A[1][1]))
 D[1][1] = sign(A[1][1])
@@ -45,15 +47,15 @@ for i in range(2, n + 1):
             summa += S[k][i] * S[k][j] * D[k][k]
         S[i][j] = (A[i][j] - summa) / (S[i][i] * D[i][i])
 
-y = [0] * m
-y[1] = A[1][m] / (S[1][1] * D[1][1])
+y = [0] * (n+1)
+y[1] = A[1][n+1] / (S[1][1] * D[1][1])
 for i in range(2, n + 1):
     summa = 0
     for k in range(1, i):
         summa += S[k][i] * y[k] * D[k][k]
-    y[i] = (A[i][m] - summa) / (S[i][i] * D[i][i])
+    y[i] = (A[i][n+1] - summa) / (S[i][i] * D[i][i])
 
-x = [0] * m
+x = [0] * (n+1)
 x[n] = y[n] / S[n][n]
 for i in range(n-1, 0, -1):
     summa = 0
@@ -63,10 +65,10 @@ for i in range(n-1, 0, -1):
 
 print("Расчитанное решение системы: ")
 for i in range(1, n + 1):
-    print(x[i])
+    print(x[i],end = ", ")
 
 summa = 0
 for i in range(1, n + 1):
     summa += (abs(x[i] - X[i]) * (abs(x[i] - X[i])))
 norma = sqrt(summa)
-print("Евклидова норма разностей рассчитанного и точного решений:", norma)
+print("\nЕвклидова норма разностей рассчитанного и точного решений:", norma)

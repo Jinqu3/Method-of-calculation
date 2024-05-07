@@ -12,11 +12,11 @@ for i in range(2, n):
     A[i] = 1
     C[i] = -2
     B[i] = 1
-    F[i] = 10 * ((i-1) / (n-1))**2
+    F[i] = 20 * ((i-1) / (n-1))**2
 
 A[n] = 1
 C[n] = -1
-F[n] = 10
+F[n] = 20
 
 print("A:")
 for i in range(2, n + 1):
@@ -45,11 +45,12 @@ beta = [0] * (n + 1)
 alpha[1] = -B[1] / C[1]
 beta[1] = F[1] / C[1]
 for i in range(2, n):
-    tmp = (C[i] + A[i] * alpha[i - 1])
-    alpha[i] = -B[i] / tmp
-    beta[i] = (F[i] - A[i] * beta[i - 1]) / tmp
+    znam = (C[i] + A[i] * alpha[i - 1])
+    alpha[i] = -B[i] / znam
+    beta[i] = (F[i] - A[i] * beta[i - 1]) / znam
 
 x[n] = (F[n] - A[n] * beta[n - 1]) / (C[n] + A[n] * alpha[n - 1])
+
 for i in range(n - 1, 0, -1):
     x[i] = alpha[i] * x[i + 1] + beta[i]
 
