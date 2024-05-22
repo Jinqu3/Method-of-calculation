@@ -1,31 +1,12 @@
 import numpy as np
 from math import sqrt
 
+
 def norm(a):
     sum = 0
     for i in a:
         sum += i*i
     return sqrt(sum)
-
-def seidel_solver(A, b, n, epsilon, itmax):
-    x = [0]*n
-    it = 0
-    while it < itmax:
-        x_new = x.copy()
-        for i in range(n):
-            s1 = sum(A[i][j] * x_new[j] for j in range(i))
-            s2 = sum(A[i][j] * x[j] for j in range(i + 1, n))
-            x_new[i] =  (b[i] - s1 - s2) / A[i][i]
-        
-        dx = norm(np.array(x_new) - np.array(x))
-
-        if dx < epsilon:
-            break
-        
-        x = x_new
-        it += 1
-    
-    return x, it, dx
 
 def relaxation_solver(A, b, n, omega, epsilon, itmax):
     x = [0]*n
@@ -47,30 +28,14 @@ def relaxation_solver(A, b, n, omega, epsilon, itmax):
     
     return x, it, dx
 
-
-def optimal_omega(A, b, omega_start=0.1, omega_end=2.0, omega_step=0.001):
+def optimal_omega(A, b, epsilon, itmax, omega_start=0.1, omega_end=2.0, omega_step=0.1):
     best_omega = omega_start
-    dx_min = 0
+    min_it = itmax
     for omega in np.arange(omega_start, omega_end + omega_step, omega_step):
-        x = [0]*n
-        it = 0
-        dx_min = 1
-        while it < 25:
-            x_new = x.copy()
-            for i in range(n):
-                s1 = sum(A[i][j] * x_new[j] for j in range(i))
-                s2 = sum(A[i][j] * x[j] for j in range(i + 1, n))
-                x_new[i] = (1 - omega) * x[i] + omega * ( (b[i] - s1 - s2)/ A[i][i] )
-        
-            dx = norm(np.array(x_new) - np.array(x))
-
-            if dx < dx_min:
-                dx_min = dx
-                best_omega = omega
-        
-            x = x_new
-            it += 1
-
+        x, it, dx = relaxation_solver(A, b, n,  omega, epsilon, itmax)
+        if it < min_it:
+            min_it = it
+            best_omega = omega
     return best_omega
 
 # Входные данные
@@ -105,24 +70,9 @@ print(f"Вектор b для метода релаксации:\n {b_relax}\n")
 epsilon = float(input("Введите параметр ε для окончания итераций: "))
 itmax = int(input("Введите максимальное число итераций (itmax): "))
 
-# Решение методом Зейделя
-print("\nМетод Зейделя:")
-x_seidel, it_seidel, dx_seidel = seidel_solver(A_seidel, b_seidel, n, epsilon, itmax)
-print("Решение (вектор x):")
-print(x_seidel)
-print("Количество итераций (it):", it_seidel)
-print("Норма разности двух последних итераций для x:", dx_seidel)
-
-# Проверка условия окончания итераций
-if it_seidel == itmax:
-    print("\nВнимание: метод Зейделя достиг максимального числа итераций без удовлетворения критерия сходимости.")
-    if dx_seidel >= epsilon:
-        print("Условие окончания итераций с ε не выполнено.")
-    else:
-        print("Хотя итерации не завершились, норма разности последних итераций меньше ε.")
 
 # Поиск оптимального omega для метода релаксации
-omega = optimal_omega(A_relax, b_relax)
+omega = optimal_omega(A_relax, b_relax,epsilon,itmax)
 print("\nОптимальное значение параметра релаксации (omega):", omega)
 
 # Решение методом релаксации с оптимальным omega
